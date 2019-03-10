@@ -15,6 +15,7 @@ class PdfController():
         self.view.delete_btn['command'] = self.delete
         self.view.path_list_view.bind("<<ListboxSelect>>", self.get_info)
         self.view.merge_btn['command'] = self.merge
+        self.view.up_btn['command'] = self.moveup
         
     # Starts the Gui for the entire program
     def run(self):
@@ -95,6 +96,21 @@ class PdfController():
             self.append_feedback("\nProducer: {}".format(pdf.info.producer))
             self.append_feedback("\nSubject: {}".format(pdf.info.subject))
 
+    #move file one up the list on the file order
+    #TODO Handle if the path_list_view is still empty
+    def moveup(self):
+        file_index = self.view.path_list_view.curselection()[0]
+        file_index = file_index
+        if file_index == 0:
+            print("Already at the top of the list")
+        else:
+            self.pdfs.insert(file_index-1, self.pdfs.pop(file_index))
+            file = self.view.path_list_view.get(file_index)
+            self.view.path_list_view.delete(file_index)
+            self.view.path_list_view.insert(file_index-1, file)
+            self.view.path_list_view.select_set(file_index-1)
+
+        
 
 if __name__ == "__main__":
     print("Please run the p_merge.py file as the main program")
