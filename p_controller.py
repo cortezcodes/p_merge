@@ -16,6 +16,7 @@ class PdfController():
         self.view.path_list_view.bind("<<ListboxSelect>>", self.get_info)
         self.view.merge_btn['command'] = self.merge
         self.view.up_btn['command'] = self.moveup
+        self.view.down_btn['command'] = self.movedown
         
     # Starts the Gui for the entire program
     def run(self):
@@ -26,8 +27,9 @@ class PdfController():
     #opens the Filename open dialog box and sets the import_view to the selected file
     #TODO: Don't forget to change the initialdir to C:/ for production
     def add_file(self):
+        file_count = 1
         filepath = filedialog.askopenfilenames(title="Select PDF",
-                                               initialdir="C:\\Users\\corte\\OneDrive\\Desktop\\programming\\test_pdfs",
+                                               initialdir="C:\\Users\\corte\\OneDrive\\Desktop\\programming\\personal_projects\\desktop\\p_merge\\test_PDFs",
                                                filetypes=[('pdf files', '.pdf')])
         for file in filepath:
             pdf_obj = Pdf()
@@ -35,10 +37,20 @@ class PdfController():
                 pdf = PdfFileReader(file_binary)
                 pdf_obj.info = pdf.getDocumentInfo()
                 pdf_obj.page_num = pdf.getNumPages()
-                pdf_obj.filepath = file   
+                pdf_obj.filepath = file
             self.view.path_list_view.insert(END, file)
+            #self.build_filetree(filename=pdf_obj.filepath, num_of_pages=pdf_obj.page_num)
             self.pdfs.append(pdf_obj)
             file_binary.close()
+
+    #build the filetree of files to be manipulated
+    #TODO: Add Filetree version to do manipulations like split and merge page by page
+    def build_filetree(self, filename='', num_of_pages=1):
+        file_count = len(self.view.filetree.get_children())
+        folder = self.view.filetree.insert("", file_count,
+                                           "", text=filename)
+        
+
 
     #deletes the selected files in path_list_view
     #TODO Delete multiple files at once
@@ -56,7 +68,7 @@ class PdfController():
     def merge(self):
         with ExitStack() as stack:
             new_filepath = filedialog.asksaveasfilename(title="Select PDF",
-                                               initialdir="C:\\Users\\corte\\OneDrive\\Desktop\\programming\\test_pdfs",
+                                               initialdir="C:\\Users\\corte\\OneDrive\\Desktop\\programming\\personal_projects\\desktop\\p_merge\\test_PDFs",
                                                filetypes=[('pdf files', '.pdf'),('all files', '*.*')])
             if not re.search(".pdf$",new_filepath):
                 new_filepath = new_filepath + ".pdf"
@@ -73,7 +85,6 @@ class PdfController():
         self.clear_feedback()
         self.append_feedback("Files have been merged")
         
-
     #adds text to the feedback view
     def append_feedback(self, text):
         output_text = self.view.feedback_text.get() + text
@@ -97,12 +108,16 @@ class PdfController():
             self.append_feedback("\nSubject: {}".format(pdf.info.subject))
 
     #move file one up the list on the file order
-    #TODO Handle if the path_list_view is still empty
     def moveup(self):
-        file_index = self.view.path_list_view.curselection()[0]
-        file_index = file_index
+        if  self.view.path_list_view.curselection():
+            file_index = self.view.path_list_view.curselection()[0]
+        else:
+            self.clear_feedback()
+            self.append_feedback("\nNo file has been selected")
+            return
         if file_index == 0:
-            print("Already at the top of the list")
+            self.clear_feedback()
+            self.append_feedback("\nFile already at the top of the list")
         else:
             self.pdfs.insert(file_index-1, self.pdfs.pop(file_index))
             file = self.view.path_list_view.get(file_index)
@@ -110,6 +125,24 @@ class PdfController():
             self.view.path_list_view.insert(file_index-1, file)
             self.view.path_list_view.select_set(file_index-1)
 
+    #move file one down the list on the file order
+    def movedown(self):
+        if self.view.path_list_view.curselection():
+            file_index = self.view.path_list_view.curselection()[0]
+            list_len = self.view.path_list_view.size()
+        else:
+            self.clear_feedback()
+            self.append_feedback("\nNo file has been selected")
+            return
+        if file_index == list_len - 1:
+            self.clear_feedback()
+            self.append_feedback("\nFile already at the bottom of the merge file stack")
+        else:
+            self.pdfs.insert(file_index+1, self.pdfs.pop(file_index))
+            file = self.view.path_list_view.get(file_index)
+            self.view.path_list_view.delete(file_index)
+            self.view.path_list_view.insert(file_index+1, file)
+            self.view.path_list_view.select_set(file_index+1)
         
 
 if __name__ == "__main__":

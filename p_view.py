@@ -1,16 +1,23 @@
-from tkinter import (Frame, Entry, LEFT, Button,
-                     Listbox, BOTH, S, N, BOTTOM, TOP, X,
-                     StringVar, BROWSE, Label, NW, SUNKEN,
-                     Message, EXTENDED)
+from tkinter import *
+from tkinter.ttk import Treeview
 
 
 class PdfView():
 
     def __init__(self, master):
-        #self.import_file = StringVar()
         self.feedback_text = StringVar()
         self.feedback_text.set("Welcome to PMerge 1.0! \nCreator: Cortez McCrary \nCreated: March 1 2019.")
 
+        #Frame to hold filetree
+        self.filetree_frame = Frame(master=master)
+        self.filetree_frame.pack(fill=BOTH)
+
+        #File tree view
+        #self.filetree = Treeview(master=self.filetree_frame)
+        #self.filetree.heading("#0", text="File", anchor=W)
+        #self.filetree.pack(side=TOP, fill=BOTH)
+
+    
         #Frame to hold all buttons
         self.top_frame = Frame(master=master, bg='dark slate gray')
         self.top_frame.pack()
@@ -38,11 +45,6 @@ class PdfView():
                                         bg="dark slate gray", fg="white", bd=5, justify=LEFT, padx=5, height=340,
                                         wraplength=750) #height=340,
         self.feedback_text_view.pack(fill=BOTH, expand=1)
-        #self.feedback_text_view = Text(master=self.center_frame, bg='black',
-         #                                 textvariable=self.feedback_text, width=100,
-          #                                relief=SUNKEN, fg='white')
-        #self.feedback_text.set("Welcome to PMerge! Created by Cortez McCrary Jan 2019")
-        #self.feedback_text_view.pack(fill=BOTH, expand=1)
 
     
 
