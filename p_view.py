@@ -11,12 +11,6 @@ class PdfView():
         #Frame to hold filetree
         self.filetree_frame = Frame(master=master)
         self.filetree_frame.pack(fill=BOTH)
-
-        #File tree view
-        #self.filetree = Treeview(master=self.filetree_frame)
-        #self.filetree.heading("#0", text="File", anchor=W)
-        #self.filetree.pack(side=TOP, fill=BOTH)
-
     
         #Frame to hold all buttons
         self.top_frame = Frame(master=master, bg='dark slate gray')

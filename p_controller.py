@@ -29,7 +29,7 @@ class PdfController():
     def add_file(self):
         file_count = 1
         filepath = filedialog.askopenfilenames(title="Select PDF",
-                                               initialdir="C:\\Users\\corte\\OneDrive\\Desktop\\programming\\personal_projects\\desktop\\p_merge\\test_PDFs",
+                                               initialdir="C:\\",
                                                filetypes=[('pdf files', '.pdf')])
         for file in filepath:
             pdf_obj = Pdf()
@@ -39,7 +39,6 @@ class PdfController():
                 pdf_obj.page_num = pdf.getNumPages()
                 pdf_obj.filepath = file
             self.view.path_list_view.insert(END, file)
-            #self.build_filetree(filename=pdf_obj.filepath, num_of_pages=pdf_obj.page_num)
             self.pdfs.append(pdf_obj)
             file_binary.close()
 
@@ -68,7 +67,7 @@ class PdfController():
     def merge(self):
         with ExitStack() as stack:
             new_filepath = filedialog.asksaveasfilename(title="Select PDF",
-                                               initialdir="C:\\Users\\corte\\OneDrive\\Desktop\\programming\\personal_projects\\desktop\\p_merge\\test_PDFs",
+                                               initialdir="C:\\",
                                                filetypes=[('pdf files', '.pdf'),('all files', '*.*')])
             if not re.search(".pdf$",new_filepath):
                 new_filepath = new_filepath + ".pdf"
